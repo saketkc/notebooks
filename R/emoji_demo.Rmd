@@ -4,10 +4,9 @@ author: "Saket Choudhary"
 date: "October 21, 2015"
 output: 
   html_document:
-     css: css/font-awesome.css
+     css: fawsome/css/font-awesome.css
      self_contained: no
 ---
 
 
-<i class="fa fa-renren fa-5x"></i>
-<i class="fa fa-battery-full"></i>
+<i class="fa fa-thumbs-up fa-5x"></i>
