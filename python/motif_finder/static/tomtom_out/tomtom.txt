@@ -1,0 +1,2 @@
+#Query ID	Target ID	Optimal offset	p-value	E-value	q-value	Overlap	Query consensus	Target consensus	Orientation
+CTCF-Homo_sapiens	CTCF-Drosophila_melanogaster	-3	3.32877e-06	3.32877e-06	6.65753e-06	15	TGGCCACCAGGGGGCGCTA	CCGCTAGATGGCGCC	+
