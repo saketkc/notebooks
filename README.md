@@ -16,3 +16,7 @@ Jupyter notebooks for demo/projects
 - Matlab
     - [CSCI 567: Machine Learning Homework 1](http://nbviewer.jupyter.org/github/saketkc/notebooks/blob/master/matlab/CSCI-567_Homework1.ipynb)
 
+- R
+    - [Central Limit Theorem](http://nbviewer.jupyter.org/github/saketkc/notebooks/blob/master/R/CLT.ipynb)
+    - [Multiple Linear Regression](http://nbviewer.jupyter.org/github/saketkc/notebooks/blob/master/R/MultipleLinearRegression_in_R.ipynb)
+    - [Emojis in Rmarkdown](http://htmlpreview.github.io/?https://github.com/saketkc/notebooks/blob/master/R/emoji_demo.html)
