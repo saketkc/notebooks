@@ -9,6 +9,7 @@ Jupyter notebooks for demo/projects
     - [PDF=PMF?](http://nbviewer.jupyter.org/github/saketkc/notebooks/blob/master/python/PDF.ipynb)
     - [Normality and Chi-Square relation](http://nbviewer.jupyter.org/github/saketkc/notebooks/blob/master/python/Normality%20and%20Chi%20Squared.ipynb)
     - [Mixed Linear Models using statsmodels](http://nbviewer.jupyter.org/github/saketkc/notebooks/blob/master/python/Mixed_Linear_Models.ipynb)
+    - [Examples of Expectation Maximisation](notebooks/The-EM-Algorithm-And-Extensions)
 
 - Julia
     - [Optimal Control Design of a Reparable Multistate system](http://nbviewer.jupyter.org/github/saketkc/notebooks/blob/master/julia/math-501-project.ipynb)
