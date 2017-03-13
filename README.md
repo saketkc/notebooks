@@ -10,6 +10,7 @@ Jupyter notebooks for demo/projects
     - [Normality and Chi-Square relation](http://nbviewer.jupyter.org/github/saketkc/notebooks/blob/master/python/Normality%20and%20Chi%20Squared.ipynb)
     - [Mixed Linear Models using statsmodels](http://nbviewer.jupyter.org/github/saketkc/notebooks/blob/master/python/Mixed_Linear_Models.ipynb)
     - [Examples of Expectation Maximisation](The-EM-Algorithm-And-Extensions)
+    - [Finding a "Kneedle" in a Haystack: Detecting Knee Points in System Behavior](http://nbviewer.jupyter.org/github/saketkc/notebooks/blob/master/python/Kneedle%20Algorithm.ipynb)
 
 - Julia
     - [Optimal Control Design of a Reparable Multistate system](http://nbviewer.jupyter.org/github/saketkc/notebooks/blob/master/julia/math-501-project.ipynb)
