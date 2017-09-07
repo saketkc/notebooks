@@ -12,6 +12,8 @@ Jupyter notebooks for demo/projects
     - [Examples of Expectation Maximisation](The-EM-Algorithm-And-Extensions)
     - [Finding a "Kneedle" in a Haystack: Detecting Knee Points in System Behavior](http://nbviewer.jupyter.org/github/saketkc/notebooks/blob/master/python/Kneedle%20Algorithm.ipynb?flush_cache=True)
     - [Sequence Logo in Python -- multiple fonts](http://nbviewer.jupyter.org/github/saketkc/notebooks/blob/master/python/Sequence%20Logo%20Python%20%20--%20Any%20font.ipynb?flush_cache=true)
+    - [Determinant of large sparse matrices](http://nbviewer.jupyter.org/github/saketkc/notebooks/blob/master/python/logdet-sparse-matrix.ipynb)
+    - [REL-plots](http://nbviewer.jupyter.org/github/saketkc/notebooks/blob/master/python/RLE%20Plots%20--%20Visualising%20Unwanted%20Variation.ipynb)
 
 - Julia
     - [Optimal Control Design of a Reparable Multistate system](http://nbviewer.jupyter.org/github/saketkc/notebooks/blob/master/julia/math-501-project.ipynb)
