@@ -1,0 +1,147 @@
+---
+title: "DESeq2 separate size factors"
+output: html_notebook
+---
+
+# Utility functions
+```{r}
+suppressMessages(library(DESeq2))
+suppressMessages(library(fdrtool))
+suppressMessages(library(cowplot))
+
+
+annotations <- read.table(file.path('..', 'annotations', 
+                                    'hg38_gene_names_stripped.tsv'), 
+                          header = F, 
+                          col.names = c('gene_id', 'gene_name', 
+                                        'gene_type'),
+                          stringsAsFactors = F)
+rownames(annotations) <- annotations$gene_id
+
+
+histone.genes.df <- read.table(file.path('..', 'annotations', 
+                                         'histone_genes.tsv'), 
+                               header = T, 
+                               stringsAsFactors = F,
+                               sep = '\t') 
+histone.genes.1 <- annotations[grep('HIST', annotations$gene_name), ]$gene_id
+histone.genes.2 <-annotations[annotations$gene_name %in% 
+                                histone.genes.df$Approved.Symbol, ]$gene_id
+# Add RP1-34B20.21 separately since symbol doesn't have HIST in it.
+histone.genes <- unique(c(histone.genes.1, histone.genes.2, 'ENSG00000282988'))
+
+
+readcounts.dir <- file.path('..', 'read_counts', 'byCDS')
+results.dir <- file.path('..', 'results', 'translation_efficiency', 
+                         'without_histones_edgeRD')
+rna.design.file <- file.path('..', 'design_files', 'rna_seq_design.tsv')
+ribo.design.file <- file.path('..', 'design_files', 'ribo_seq_design.tsv')
+
+## Suffix of htseq-count output
+counts.suffix <- '.CDS.counts.tsv'
+
+rna.design.info <- read.table(rna.design.file, header=T, 
+                              stringsAsFactors=FALSE)
+ribo.design.info <- read.table(ribo.design.file, header=T, 
+                               stringsAsFactors=FALSE)
+
+
+count.reads <- function(design.info, dirname){
+ files <- paste(design.info$SampleFile, counts.suffix, sep='')
+ sampleName <- design.info$SampleName
+ sampleTable <- data.frame(sampleName=sampleName, 
+                           fileName=files, 
+                           time=factor(design.info$Time, levels=c('T0', 'T1', 'T24')), 
+                           Cell_line=factor(design.info$Cell_line, levels=c('U251', 'U343')))
+ ddsHTSeq <- DESeqDataSetFromHTSeqCount(sampleTable = sampleTable, 
+          directory = file.path(readcounts.dir, dirname),
+          design = ~ time+Cell_line)
+ rownames(ddsHTSeq) <- gsub('\\.[0-9]+', '', rownames(ddsHTSeq))
+ # Remove histones
+ ddsHTSeq <- ddsHTSeq[!(rownames(ddsHTSeq) %in% histone.genes),]
+ ddsHTSeq <- ddsHTSeq[ rowSums(counts(ddsHTSeq)) > 1, ]
+ dds <- DESeq(ddsHTSeq)
+
+ return(dds)
+}
+
+```
+
+
+```{r}
+rna.read.counts.all <- count.reads(rna.design.info, 'rna_seq')
+ribo.read.counts.all <- count.reads(ribo.design.info, 'ribo_seq')
+
+rna.conditions.time.all <- as.factor(
+  as.vector(sapply(colnames(rna.read.counts.all), 
+                   function(x) unlist(strsplit(x, '_'))[3])))
+ribo.conditions.time.all <- as.factor(
+  as.vector(sapply(colnames(ribo.read.counts.all), 
+                   function(x) unlist(strsplit(x, '_'))[4])))
+rna.conditions.cell.all <- as.factor(
+  as.vector(sapply(colnames(rna.read.counts.all),
+                   function(x) unlist(strsplit(x, '_'))[1])))
+ribo.conditions.cell.all <- as.factor(as.vector(
+  sapply(colnames(ribo.read.counts.all),
+         function(x) unlist(strsplit(x, '_'))[1])))
+
+rna.conditions.all <- data.frame('cell.type' = rna.conditions.cell.all, 
+                                 'time' = rna.conditions.time.all)
+ribo.conditions.all <- data.frame('cell.type' = ribo.conditions.cell.all, 
+                                  'time' = ribo.conditions.time.all)
+common.genes <- intersect(rownames(rna.read.counts.all), 
+                       rownames(ribo.read.counts.all)) 
+rna.read.counts.all <- rna.read.counts.all[common.genes,]
+ribo.read.counts.all <- ribo.read.counts.all[common.genes,]
+colnames(rna.read.counts.all) <- paste(colnames(rna.read.counts.all),
+                                'RNA', sep='_')
+colnames(ribo.read.counts.all) <- paste(colnames(ribo.read.counts.all),
+                                 'Ribo', sep='_')
+```
+# Estimate dispersion for RNA-Seq
+
+## Full Design
+
+```{r}
+rna.dds.full.design <- rna.read.counts.all
+plotDispEsts(rna.dds.full.design)
+```
+## Reduced Design
+
+```{r}
+rna.dds.reduced.design <- rna.read.counts.all
+design(rna.dds.reduced.design) <- formula(~1)
+rna.dds.reduced.design <- DESeq(rna.dds.reduced.design)
+rna.dds.reduced.dispersion <-  estimateDispersions(rna.dds.reduced.design)
+plotDispEsts(rna.dds.reduced.design)
+
+```
+## Compare genewise
+```{r}
+dispGeneEst.diff <- mcols(rna.dds.reduced.design)$dispGeneEst - mcols(rna.dds.full.design)$dispGeneEst
+qplot(dispGeneEst.diff, binwidth=0.8)
+```
+# Estimate dispersion for Ribo-Seq
+```{r}
+ribo.dds.full.design <- ribo.read.counts.all
+plotDispEsts(ribo.dds.full.design)
+```
+
+```{r}
+ribo.dds.reduced.design <- ribo.read.counts.all
+design(ribo.dds.reduced.design) <- formula(~1)
+ribo.dds.reduced.design <- DESeq(ribo.dds.reduced.design)
+ribo.dds.reduced.dispersion <-  estimateDispersions(ribo.dds.reduced.design)
+plotDispEsts(ribo.dds.reduced.design)
+
+```
+## Compare genewise
+```{r}
+dispGeneEst.diff <- mcols(ribo.dds.reduced.design)$dispGeneEst - mcols(rna.dds.reduced.design)$dispGeneEst
+qplot(dispGeneEst.diff, binwidth=0.8)
+```
+
+
+```{r}
+t.test(mcols(ribo.dds.reduced.design)$dispGeneEst, mcols(rna.dds.reduced.design)$dispGeneEst, paired =  TRUE)
+```
