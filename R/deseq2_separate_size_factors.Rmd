@@ -145,3 +145,10 @@ qplot(dispGeneEst.diff, binwidth=0.8)
 ```{r}
 t.test(mcols(ribo.dds.reduced.design)$dispGeneEst, mcols(rna.dds.reduced.design)$dispGeneEst, paired =  TRUE)
 ```
+# Note
+
+DESeq2 calculates a single dipsersion parameter for each gene. Given RNA and Ribo-seq samples, if Ribo-seq samples has higher dispersion than RNA-seq samples,the gene wise estimates will be somewhat in the middle, which is not always bad. This happens because DESeq2 shares information across all genes and hence dispersion estimates will be moderated towards the trend for similar genes.
+
+Some quick checks involve:
+1. Look at PCA with vst applied with blind=FALSE, to make sure the biological variation (b/w RNA and Ribo) is not smoothed out excessively. is the within-group variability of RNA-seq or Ribo-seq high?
+2.
