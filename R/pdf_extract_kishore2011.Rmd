@@ -1,0 +1,50 @@
+---
+title: "Mining Supplementary PDFs"
+author: "Saket Choudhary (saketkc@gmail.com)"
+subtitle: Using pdftools to extract tabular information hidden in supplemtary pdfs
+output:
+  html_notebook: default
+  html_document: default
+---
+
+A lot of the information is always burried in the supplementary section of any paper. The best possible scenarios is to have raw information avaialble, for example any information in tabular format should have been made available through a csv/tsv file. However for various reasons, this information is buried deep in doc/pdfs.
+
+My aim here was to draw information from one of such supplementary [pdfs](http://www.nature.com/nmeth/journal/v8/n7/extref/nmeth.1608-S1.pdf) from a 2011 paper [Kishore et al.](http://www.nature.com/nmeth/journal/v8/n7/full/nmeth.1608.html)
+
+
+[rOpenSci's](https://ropensci.org/) `pdftools` package comes in very handy. I was able to extract info from Supplementary table 1. The input here is a trimmed version of the original pdf, with only Supplementary table 1. 
+
+I used [pdfshuffler](https://sourceforge.net/projects/pdfshuffler/), but there are lot of tools that can do this.
+
+```{r}
+library(pdftools)
+library(stringr)
+txt <- pdf_text('../datasets/kishore_quantitative_2011/kishore_targets.pdf')
+all_lines <- unlist(strsplit(txt, split="\r\n",fixed = TRUE))
+splitted_lines <- unlist(strsplit(all_lines, split="\n"))
+
+## Do away with the footer
+splitted_lines <- as.character(splitted_lines[!grepl('Nature Methods*|Supplementary*', splitted_lines)])
+
+## Replace multiple spaces by single
+splitted_lines <- lapply(splitted_lines, function(x) gsub("\\s+", " ", str_trim(x)))
+unlist(splitted_lines)[1:7]
+```
+
+Next step is simple, convert the list of strings to a dataframe.
+
+```{r}
+df <- data.frame( do.call( rbind, strsplit( as.character(splitted_lines), ' ' ) ) ) 
+## Set column names
+colnames(df) <- as.character(unlist(df[1,]))
+df <- df[-1,]
+df
+```
+
+```{r}
+write.table(df, file='../datasets/kishore_quantitative_2011/kishore_clip_targets.csv', row.names = F, sep="\t", quote = F)
+```
+
+
+
+

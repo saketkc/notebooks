@@ -1,0 +1,20 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+```{r}
+suppressMessages(library(biomaRt))
+```
+
+```{r}
+ensembl <- useMart("ensembl")
+listDatasets(ensembl)
+```
+
+
+```{r}
+ensembl <- useMart("ensembl", dataset="hsapiens_gene_ensembl")
+attributes <- listDatasets(ensembl)
+```

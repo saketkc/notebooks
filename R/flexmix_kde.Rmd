@@ -1,0 +1,29 @@
+---
+title: "Flexmix for KDE"
+output: html_notebook
+author: Saket Choudhary
+---
+
+```{r}
+library(flexmix)
+set.seed(42)
+D <- c(rnorm(100,1,1), rnorm(100,5,1))
+kde <- density(D)
+m1 <- FLXMRglm(family = "gaussian")
+m2 <- FLXMRglm(family = "gaussian")
+fit <- flexmix(D ~ 1, data = as.data.frame(D), k = 2, model = list(m1, m2))
+c1 <- parameters(fit, component=1)[[1]]
+c2 <- parameters(fit, component=2)[[1]]
+plot(kde)
+abline(v=1, col='blue')
+abline(v=c1[[1]], lty=2, col='blue')
+abline(v=5, col='red')
+abline(v=c2[[1]], lty=2, col='red')
+
+```
+
+```{r}
+print(c1[[1]])
+print(c2[[1]])
+```
+      
